@@ -3,31 +3,31 @@ function executa(event) {
 	event.preventDefault();
 
 	limparResultados();
-	var valores 	 = pegaValoresDoForm();
+	var valores = pegaValoresDoForm();
 
-    var resultados 	 = executaRegex(valores);
-    
-    imprimeResultadoNoInput(resultados);
-    highlightResultados(resultados, valores.target);
+	var resultados = executaRegex(valores);
+
+	imprimeResultadoNoInput(resultados);
+	highlightResultados(resultados, valores.target);
 }
 
 
 function executaRegex(valores) {
 
 	var textoPattern = valores.pattern; //montaPatternDeDataMaisLegivel();
-	var textoTarget  = valores.target;
-	var mostraIndex  = valores.mostraIndex;
+	var textoTarget = valores.target;
+	var mostraIndex = valores.mostraIndex;
 	var mostraGrupos = valores.mostraGrupos;
 
-	var resultados	 = [];
-    var resultado 	 = null;
+	var resultados = [];
+	var resultado = null;
 
 
-	var objetoRegex  = new RegExp(textoPattern, 'g');
+	var objetoRegex = new RegExp(textoPattern, 'g');
 
 	while (resultado = objetoRegex.exec(textoTarget)) {
 
-		if(resultado[0] === "") {
+		if (resultado[0] === "") {
 			throw Error("Regex retornou valor vazio.");
 		}
 
@@ -45,7 +45,7 @@ function executaRegex(valores) {
 
 function geraResultado(resultado, index, lastIndex, mostraIndex) {
 
-	var textoIndex = mostraIndex ? " [" + index + "-" + lastIndex+ "]" : ""
+	var textoIndex = mostraIndex ? " [" + index + "-" + lastIndex + "]" : ""
 
 	return {
 		'resultado': resultado + textoIndex,
@@ -56,54 +56,54 @@ function geraResultado(resultado, index, lastIndex, mostraIndex) {
 
 
 function logaTempoDeExecucao(textoPattern, textoTarget) {
-	var pObjetoRegex  = new RegExp(textoPattern, 'g');
-    var ini = performance.now();
-    pObjetoRegex.test(textoTarget)
-	var fim =  performance.now();
-	console.log("Tempo de execução (ms) " + (fim-ini));
+	var pObjetoRegex = new RegExp(textoPattern, 'g');
+	var ini = performance.now();
+	pObjetoRegex.test(textoTarget)
+	var fim = performance.now();
+	console.log("Tempo de execução (ms) " + (fim - ini));
 }
 
 function imprimeResultadoNoInput(resultados) {
-	var inputResultado 	= document.querySelector('#resultado');
-	var labelResultado 	= document.querySelector('#labelResultados');
+	var inputResultado = document.querySelector('#resultado');
+	var labelResultado = document.querySelector('#labelResultados');
 
-    labelResultado.innerHTML = (resultados.length) + " Matches (resultados)";
+	labelResultado.innerHTML = (resultados.length) + " Matches (resultados)";
 
-	var resultadosComoArray = resultados.map(function(item){ 
+	var resultadosComoArray = resultados.map(function (item) {
 		return item.resultado;
 	});
-	
+
 	labelResultado.innerHTML = (resultadosComoArray.length) + " Matches (resultados)";
 
-    if(resultadosComoArray.length > 0) {
-    	inputResultado.value = resultadosComoArray.join(' | ');
-    	inputResultado.style.borderStyle = 'solid';
-    	inputResultado.style.borderColor = 'lime';//verde
-    } else {
-    	inputResultado.placeholder = 'Sem matches (resultados)';
-    	inputResultado.value = '';
-    	inputResultado.style.borderStyle = 'solid';
-    	inputResultado.style.borderColor = 'red';
-    }
+	if (resultadosComoArray.length > 0) {
+		inputResultado.value = resultadosComoArray.join(' | ');
+		inputResultado.style.borderStyle = 'solid';
+		inputResultado.style.borderColor = 'lime';//verde
+	} else {
+		inputResultado.placeholder = 'Sem matches (resultados)';
+		inputResultado.value = '';
+		inputResultado.style.borderStyle = 'solid';
+		inputResultado.style.borderColor = 'red';
+	}
 }
 
 
-function highlightResultados(resultados, texto) {	
+function highlightResultados(resultados, texto) {
 	var item = null;
 	var indexBegin = 0;
 	var conteudo = "";
 
-	while((item = resultados.shift()) != null) {
+	while ((item = resultados.shift()) != null) {
 		conteudo += semHighlight(escapeHtml(texto.substring(indexBegin, item.index)));
 		conteudo += comHighlight(escapeHtml(texto.substring(item.index, item.lastIndex)));
 		indexBegin = item.lastIndex;
 	}
 
 	//sobrou algum texto?
-	if((texto.length - indexBegin) > 0) {
+	if ((texto.length - indexBegin) > 0) {
 		conteudo += semHighlight(escapeHtml(texto.substring(indexBegin, texto.length)));
 	}
-	
+
 	document.querySelector("#highlightText").innerHTML = conteudo;
 }
 
@@ -116,44 +116,46 @@ function comHighlight(texto) {
 	return "<span class='bg-primary'>" + texto + "</span>";
 }
 
-function escapeHtml( string ) {
-     return string.replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-}	
+function escapeHtml(string) {
+	return string.replace(/&/g, '&amp;')
+		.replace(/"/g, '&quot;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
+}
 
 
 function pegaValoresDoForm() {
 
-	var inputTarget 	= document.querySelector('#target');
-	var inputPattern 	= document.querySelector('#pattern')
+	var inputTarget = document.querySelector('#target');
+	var inputPattern = document.querySelector('#pattern')
 	inputPattern.focus();
 
-	var checkboxIndex 	= document.querySelector('#mostraIndex');
-	var checkboxGroups 	= document.querySelector('#mostraGrupos');
+	var checkboxIndex = document.querySelector('#mostraIndex');
+	var checkboxGroups = document.querySelector('#mostraGrupos');
 
-  	_verifiqueInputs(inputTarget, inputPattern);
+	_verifiqueInputs(inputTarget, inputPattern);
 
-  	console.log('Target:  ' + inputTarget.value);
-  	console.log('Pattern: ' + inputPattern.value.trim());
+	console.log('Target:  ' + inputTarget.value);
+	console.log('Pattern: ' + inputPattern.value.trim());
 
-  	return {'target': inputTarget.value.trim(), 
-  			'pattern': inputPattern.value, 
-  			'mostraIndex': checkboxIndex.checked, 
-  			'mostraGrupos' : checkboxGroups.checked};
+	return {
+		'target': inputTarget.value.trim(),
+		'pattern': inputPattern.value,
+		'mostraIndex': checkboxIndex.checked,
+		'mostraGrupos': checkboxGroups.checked
+	};
 }
 
 function _verifiqueInputs(inputTarget, inputPattern) {
-	if(!inputTarget.value) {
+	if (!inputTarget.value) {
 		inputTarget.placeholder = 'Digite um target';
 	}
 
-	if(!inputPattern.value) {
+	if (!inputPattern.value) {
 		inputPattern.placeholder = 'Digite um pattern';
 	}
 
-	if(!inputTarget.value || !inputPattern.value) {
+	if (!inputTarget.value || !inputPattern.value) {
 		throw Error('Valores invalidos');
 	}
 }
@@ -169,10 +171,10 @@ function limparResultados() {
 
 function montaPatternDeDataMaisLegivel() {
 
-	var DIA  = "[0123]?\\d";
+	var DIA = "[0123]?\\d";
 	var _DE_ = "\\s+(de )?\\s*";
-	var MES  = "[A-Za-z][a-zç]{3,8}";
-	var ANO  = "[12]\\d{3}";
-	return DIA + _DE_ +  MES + _DE_ + ANO;  
+	var MES = "[A-Za-z][a-zç]{3,8}";
+	var ANO = "[12]\\d{3}";
+	return DIA + _DE_ + MES + _DE_ + ANO;
 
 }
